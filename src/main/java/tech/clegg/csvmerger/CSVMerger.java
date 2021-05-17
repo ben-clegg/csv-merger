@@ -33,7 +33,7 @@ public class CSVMerger
         return merging;
     }
 
-    private static CSVFile mergeRows(CSVFile toMerge)
+    static CSVFile mergeRows(CSVFile toMerge)
     {
         List<List<String>> uniqueRowValues = new ArrayList<>();
         List<Set<String>> matchingRowIds = new ArrayList<>();
@@ -92,4 +92,8 @@ public class CSVMerger
         return sb.toString();
     }
 
+    public CSVFile getCsvFile()
+    {
+        return csvFile;
+    }
 }

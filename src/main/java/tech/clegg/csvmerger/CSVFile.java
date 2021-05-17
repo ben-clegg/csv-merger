@@ -89,4 +89,19 @@ public class CSVFile
         cells.add(rowValues);
         rowIds.add(rowId);
     }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CSVFile csvFile = (CSVFile) o;
+        return getCells().equals(csvFile.getCells()) && getColumnNames().equals(csvFile.getColumnNames()) && getRowIds().equals(csvFile.getRowIds());
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(getCells(), getColumnNames(), getRowIds());
+    }
 }
