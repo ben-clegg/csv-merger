@@ -3,7 +3,6 @@ package tech.clegg.csvmerger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CSVMerger
 {
@@ -15,6 +14,9 @@ public class CSVMerger
         Path csvFilePath = Paths.get(args[0]);
         CSVMerger merger = new CSVMerger(csvFilePath);
         CSVFile merged = merge(merger.csvFile);
+
+        Path outputPath = Paths.get(csvFilePath.toString().replace(".csv", "-merged.csv"));
+        merged.write(outputPath);
     }
 
     private CSVFile csvFile;
@@ -29,6 +31,7 @@ public class CSVMerger
         CSVFile merging = new CSVFile(toMerge);
 
         merging = mergeRows(merging);
+        merging = mergeColumns(merging);
 
         return merging;
     }

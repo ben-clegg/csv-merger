@@ -1,8 +1,9 @@
 package tech.clegg.csvmerger;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -28,16 +29,19 @@ public class CSVFile
         try
         {
             load(location);
-        } catch (FileNotFoundException e)
+        } catch (IOException e)
         {
             e.printStackTrace();
         }
     }
 
-    private void load(Path location) throws FileNotFoundException
+    private void load(Path location) throws IOException
     {
-        BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(location)));
-        List<String> lines = reader.lines().collect(Collectors.toList());
+        List<String> lines;
+        try (BufferedReader reader = new BufferedReader(new FileReader(String.valueOf(location))))
+        {
+            lines = reader.lines().collect(Collectors.toList());
+        }
 
         // Load column names
         columnNames = Arrays.stream(lines.remove(0).split(",")).collect(Collectors.toList());
@@ -111,6 +115,46 @@ public class CSVFile
             // Add cell for row
             cells.get(r).add(colValues.get(r));
         }
+    }
+
+    public void write(Path outputPath)
+    {
+        try (FileWriter writer = new FileWriter(outputPath.toFile()))
+        {
+            // Header
+            StringBuilder header = new StringBuilder();
+            header.append("RowID,");
+            Iterator<String> colIter = columnNames.listIterator();
+            while (colIter.hasNext())
+            {
+                header.append(colIter.next());
+                if (colIter.hasNext())
+                    header.append(",");
+            }
+            header.append("\n");
+            writer.write(header.toString());
+
+            // Each row
+            for (int r = 0; r < rowIds.size(); r++)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.append(rowIds.get(r)).append(",");
+                Iterator<String> cellIter = cells.get(r).listIterator();
+                while (cellIter.hasNext())
+                {
+                    sb.append(cellIter.next());
+                    if (cellIter.hasNext())
+                        sb.append(",");
+                }
+                sb.append("\n");
+                writer.write(sb.toString());
+            }
+
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
