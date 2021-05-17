@@ -78,4 +78,38 @@ public class CSVMergerTest
         assertEquals("1", merged.getCells().get(1).get(3));
     }
 
+    @Test
+    public void testMergeColumns()
+    {
+        CSVFile merged = CSVMerger.mergeColumns(CSV_FILE);
+
+        // Only three columns should remain
+        assertEquals(3, merged.getColumnNames().size());
+
+        // Column names correct
+        assertTrue(merged.getColumnNames().get(0).contains("CheckA"));
+        assertTrue(merged.getColumnNames().get(0).contains("CheckC"));
+        assertTrue(merged.getColumnNames().get(1).contains("CheckB"));
+        assertTrue(merged.getColumnNames().get(2).contains("CheckD"));
+
+
+        // Cell values are correct
+        assertEquals("1", merged.getCells().get(0).get(0));
+        assertEquals("0", merged.getCells().get(0).get(1));
+        assertEquals("0", merged.getCells().get(0).get(2));
+
+        assertEquals("0", merged.getCells().get(1).get(0));
+        assertEquals("0", merged.getCells().get(1).get(1));
+        assertEquals("1", merged.getCells().get(1).get(2));
+
+        assertEquals("0", merged.getCells().get(2).get(0));
+        assertEquals("0", merged.getCells().get(2).get(1));
+        assertEquals("1", merged.getCells().get(2).get(2));
+
+        assertEquals("1", merged.getCells().get(3).get(0));
+        assertEquals("0", merged.getCells().get(3).get(1));
+        assertEquals("0", merged.getCells().get(3).get(2));
+
+    }
+
 }

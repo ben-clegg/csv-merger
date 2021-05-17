@@ -44,7 +44,7 @@ public class CSVMerger
             String rowId = toMerge.getRowIds().get(r);
             List<String> rowValues = toMerge.getCells().get(r);
 
-            if(!uniqueRowValues.contains(rowValues))
+            if (!uniqueRowValues.contains(rowValues))
             {
                 uniqueRowValues.add(rowValues);
                 matchingRowIds.add(new HashSet<>());
@@ -56,7 +56,7 @@ public class CSVMerger
         }
 
         // Number of unique rows and their according row id groups should be equal
-        assert(uniqueRowValues.size() == matchingRowIds.size());
+        assert (uniqueRowValues.size() == matchingRowIds.size());
 
         // Generate a new CSV with duplicate rows removed
         CSVFile merged = new CSVFile(toMerge);
@@ -67,6 +67,50 @@ public class CSVMerger
             merged.addRow(
                     generateGroupedIdentifier(matchingRowIds.get(r)),
                     uniqueRowValues.get(r)
+            );
+        }
+
+        return merged;
+    }
+
+    static CSVFile mergeColumns(CSVFile toMerge)
+    {
+        List<List<String>> uniqueColumnCells = new ArrayList<>();
+        List<Set<String>> matchingColumnNames = new ArrayList<>();
+
+        // Determine matching columns
+        for (int c = 0; c < toMerge.getColumnNames().size(); c++)
+        {
+            String colName = toMerge.getColumnNames().get(c);
+
+            // Construct cell values for column
+            List<String> colCellValues = new ArrayList<>();
+            for (List<String> rowValues : toMerge.getCells())
+                colCellValues.add(rowValues.get(c));
+
+            if (!uniqueColumnCells.contains(colCellValues))
+            {
+                uniqueColumnCells.add(colCellValues);
+                matchingColumnNames.add(new HashSet<>());
+            }
+
+            // Add column name
+            int index = uniqueColumnCells.indexOf(colCellValues);
+            matchingColumnNames.get(index).add(colName);
+        }
+
+        // Number of unique columns and according column names should be equal
+        assert (uniqueColumnCells.size() == matchingColumnNames.size());
+
+        // Generate a new CSV with duplicate columns removed
+        CSVFile merged = new CSVFile(toMerge);
+        merged.clearColumns();
+
+        for (int c = 0; c < matchingColumnNames.size(); c++)
+        {
+            merged.addColumn(
+                    generateGroupedIdentifier(matchingColumnNames.get(c)),
+                    uniqueColumnCells.get(c)
             );
         }
 

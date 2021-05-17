@@ -84,10 +84,33 @@ public class CSVFile
         rowIds = new ArrayList<>();
     }
 
+    public void clearColumns()
+    {
+        cells = new ArrayList<>();
+        columnNames = new ArrayList<>();
+    }
+
     public void addRow(String rowId, List<String> rowValues)
     {
-        cells.add(rowValues);
         rowIds.add(rowId);
+        cells.add(rowValues);
+    }
+
+    public void addColumn(String columnName, List<String> colValues)
+    {
+        columnNames.add(columnName);
+        // Add values to each according row
+
+        for (int r = 0; r < rowIds.size(); r++)
+        {
+            // Row cells may not exist
+            if(cells.size() <= r)
+            {
+                cells.add(new ArrayList<>());
+            }
+            // Add cell for row
+            cells.get(r).add(colValues.get(r));
+        }
     }
 
     @Override
